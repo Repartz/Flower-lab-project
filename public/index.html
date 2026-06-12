@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="css/hero.css">
   <link rel="stylesheet" href="css/products.css">
   <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/mobile.css">
   <link rel="stylesheet" href="css/about.css">
   <link rel="stylesheet" href="css/footer.css">
   <style>
@@ -72,14 +73,20 @@
           <span class="cart-badge">0</span>
         </a>
         <a href="/login.html" class="header-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-            <circle cx="12" cy="7" r="4"/>
-          </svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
         </a>
+        <button class="hamburger" onclick="toggleMobileNav()">
+          <span></span><span></span><span></span>
+        </button>
       </div>
     </div>
   </header>
+  <div class="mobile-nav" id="mobile-nav">
+    <a href="/">Главная</a>
+    <a href="/catalog.html">Каталог</a>
+    <a href="/cart.html">Корзина</a>
+    <a href="/login.html">Вход</a>
+  </div>
 
   <!-- HERO -->
   <section class="hero">
@@ -308,6 +315,15 @@
   <script src="/js/cart.js?v=1781215710"></script>
   <script src="/js/main.js?v=1781215710"></script>
   <script src="/js/animations.js?v=1"></script>
+  <script>
+    function toggleMobileNav() {
+      const nav = document.getElementById('mobile-nav');
+      const hamburger = document.querySelector('.hamburger');
+      nav.classList.toggle('active');
+      hamburger.classList.toggle('active');
+      document.body.style.overflow = nav.classList.contains('active') ? 'hidden' : '';
+    }
+  </script>
   <script>
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
       anchor.addEventListener('click', function(e) {

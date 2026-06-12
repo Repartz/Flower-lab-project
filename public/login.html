@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Вход | Flower Lab Norilsk</title>
   <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/mobile.css">
   <style>
     body { display: flex; align-items: center; justify-content: center; min-height: 100vh; }
     .login-card { background: var(--surface-container-lowest); border-radius: var(--radius-lg); box-shadow: var(--shadow-elevated); padding: 48px; width: 100%; max-width: 400px; }
@@ -92,6 +93,15 @@
         requestAnimationFrame(step);
       });
     });
+  </script>
+  <script>
+    function toggleMobileNav() {
+      const nav = document.getElementById('mobile-nav');
+      const hamburger = document.querySelector('.hamburger');
+      nav.classList.toggle('active');
+      hamburger.classList.toggle('active');
+      document.body.style.overflow = nav.classList.contains('active') ? 'hidden' : '';
+    }
   </script>
 </body>
 </html>
