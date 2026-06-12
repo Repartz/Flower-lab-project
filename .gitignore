@@ -2,7 +2,7 @@ node_modules/
 .env
 .DS_Store
 
-# Old static files at root only (not in public/)
+# Old static files at root only
 /index.html
 /admin.html
 /cart.html
@@ -14,7 +14,3 @@ node_modules/
 /*.jpg
 /*.png
 /*.avif
-
-# Uploaded files (stored in DB, not in git)
-public/uploads/*
-!public/uploads/.gitkeep
