@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Логи | Flower Lab Admin</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+  <div class="admin-layout" id="admin-layout">
+    <div id="sidebar"></div>
+    <main class="admin-main">
+      <h1>Журнал действий</h1>
+      <div style="display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap">
+        <select id="filter-action" onchange="loadLogs()" style="padding:8px;border:1px solid var(--outline-variant);border-radius:6px">
+          <option value="">Все действия</option>
+          <option value="CREATE">Создание</option>
+          <option value="UPDATE">Обновление</option>
+          <option value="DELETE">Удаление</option>
+          <option value="LOGIN">Вход</option>
+          <option value="LOGOUT">Выход</option>
+          <option value="STATUS_CHANGE">Смена статуса</option>
+        </select>
+        <select id="filter-table" onchange="loadLogs()" style="padding:8px;border:1px solid var(--outline-variant);border-radius:6px">
+          <option value="">Все таблицы</option>
+          <option value="employees">Сотрудники</option>
+          <option value="flowers">Товары</option>
+          <option value="orders">Заказы</option>
+          <option value="categories">Категории</option>
+        </select>
+      </div>
+      <table class="admin-table" id="logs-table">
+        <thead><tr><th>Дата</th><th>Сотрудник</th><th>Действие</th><th>Таблица</th><th>ID записи</th><th>Детали</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </main>
+  </div>
+
+  <script src="/js/api.js?v=1781215710"></script>
+  <script src="/js/main.js?v=1781215710"></script>
+  <script src="/js/admin.js?v=1781215710"></script>
+  <script>
+    (async function() {
+      const user = await checkAuth();
+      if (!user) return;
+      document.getElementById('sidebar').innerHTML = renderAdminSidebar('logs');
+      await loadLogs();
+    })();
+
+    async function loadLogs() {
+      const params = {};
+      const action = document.getElementById('filter-action').value;
+      const table = document.getElementById('filter-table').value;
+      if (action) params.action = action;
+      if (table) params.table_name = table;
+
+      const logs = await api.logs.list(params);
+      document.querySelector('#logs-table tbody').innerHTML = logs.map(l => `<tr>
+        <td>${formatDate(l.created_at)}</td>
+        <td>${l.employee_name || '—'}</td>
+        <td>${actionLabels[l.action] || l.action}</td>
+        <td>${l.table_name || '—'}</td>
+        <td>${l.record_id || '—'}</td>
+        <td><button onclick="showLogDetail(this)" data-old='${JSON.stringify(l.old_data || {}).replace(/'/g,"&apos;")}' data-new='${JSON.stringify(l.new_data || {}).replace(/'/g,"&apos;")}'">Показать</button></td>
+      </tr>`).join('');
+    }
+
+    function showLogDetail(btn) {
+      const oldData = btn.dataset.old;
+      const newData = btn.dataset.new;
+      alert('Было:\n' + JSON.stringify(JSON.parse(oldData), null, 2) + '\n\nСтало:\n' + JSON.stringify(JSON.parse(newData), null, 2));
+    }
+  </script>
+</body>
+</html>

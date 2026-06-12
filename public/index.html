@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flower Lab Norilsk | Цветы из сердца Арктики</title>
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/header.css">
+  <link rel="stylesheet" href="css/hero.css">
+  <link rel="stylesheet" href="css/products.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/about.css">
+  <link rel="stylesheet" href="css/footer.css">
+  <style>
+    .how-section { background: var(--surface-container-low); }
+    .how-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; margin-top: 48px; }
+    .how-step { text-align: center; }
+    .how-icon { width: 72px; height: 72px; border-radius: 50%; background: var(--primary-container); display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; }
+    .how-icon svg { width: 32px; height: 32px; color: var(--on-primary-container); }
+    .how-step h3 { font-family: var(--font-headline); font-size: 18px; margin-bottom: 8px; }
+    .how-step p { color: var(--on-surface-variant); font-size: 14px; line-height: 1.5; }
+    .new-section .products-grid { grid-template-columns: repeat(4, 1fr); }
+    .occasions-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+    .occasion-card { position: relative; border-radius: var(--radius-lg); overflow: hidden; height: 220px; cursor: pointer; transition: transform 0.3s; }
+    .occasion-card:hover { transform: translateY(-4px); }
+    .occasion-card img { width: 100%; height: 100%; object-fit: cover; transition: filter 0.4s ease, transform 0.4s ease; }
+    .occasion-card:hover img { filter: blur(0) !important; transform: scale(1.05); }
+    .occasion-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 60%); display: flex; align-items: flex-end; padding: 20px; }
+    .occasion-overlay h3 { color: #fff; font-family: var(--font-headline); font-size: 18px; letter-spacing: 0.05em; }
+    .occasion-overlay p { color: rgba(255,255,255,0.8); font-size: 13px; margin-top: 4px; }
+    .reviews-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .review-card { background: var(--surface-container-lowest); border-radius: var(--radius-lg); padding: 32px; box-shadow: var(--shadow-ambient); }
+    .review-stars { color: #f5a623; font-size: 16px; margin-bottom: 12px; }
+    .review-text { font-size: 15px; line-height: 1.6; color: var(--on-surface-variant); margin-bottom: 16px; font-style: italic; }
+    .review-author { font-weight: 500; font-size: 14px; }
+    .review-date { font-size: 12px; color: var(--outline); margin-top: 4px; }
+    @media (max-width: 1024px) {
+      .how-grid, .occasions-row, .reviews-grid { grid-template-columns: repeat(2, 1fr); }
+      .new-section .products-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 640px) {
+      .how-grid, .occasions-row, .reviews-grid { grid-template-columns: 1fr; }
+      .new-section .products-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-container">
+      <a href="/" class="logo">
+        <svg class="logo-icon" viewBox="0 0 40 40" fill="none">
+          <path d="M20 5L25 15L35 20L25 25L20 35L15 25L5 20L15 15L20 5Z" fill="#7b5455"/>
+        </svg>
+        <span class="logo-text">FLOWER LAB</span>
+      </a>
+      <nav class="nav">
+        <a href="/" class="nav-link active">Главная</a>
+        <a href="/catalog.html" class="nav-link">Каталог</a>
+        <a href="#about" class="nav-link">О нас</a>
+        <a href="#contact" class="nav-link">Контакты</a>
+      </nav>
+      <div class="header-actions">
+        <a href="/cart.html" class="header-icon cart-count">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M6 6h15l-1.5 9h-12z"/>
+            <circle cx="9" cy="20" r="1"/>
+            <circle cx="18" cy="20" r="1"/>
+          </svg>
+          <span class="cart-badge">0</span>
+        </a>
+        <a href="/login.html" class="header-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero">
+    <img src="/uploads/hero.avif" alt="Flower Lab" class="hero-background">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <p class="hero-subtitle">Arctic Floral Atelier</p>
+      <h1 class="hero-title">Тепло посреди полярной ночи</h1>
+      <p class="hero-description">Уникальные букеты и композиции, созданные с любовью в Норильске. Свежие цветы с доставкой по городу.</p>
+      <div class="hero-cta">
+        <a href="/catalog.html" class="btn btn-primary">Выбрать букет</a>
+        <a href="#how" class="btn btn-secondary">Как заказать</a>
+      </div>
+    </div>
+    <div class="hero-scroll">
+      <span>Прокрутите вниз</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 5v14M5 12l7 7 7-7"/>
+      </svg>
+    </div>
+  </section>
+
+  <!-- ХИТЫ -->
+  <section id="products" class="products-section section">
+    <div class="container">
+      <div class="section-header">
+        <p class="section-label">Популярное</p>
+        <h2 class="section-title">Хиты продаж</h2>
+      </div>
+    </div>
+    <div class="hits-carousel-wrapper">
+      <div class="hits-carousel" id="hits-carousel"></div>
+    </div>
+    <div class="container">
+      <div style="text-align:center;margin-top:40px">
+        <a href="/catalog.html" class="btn btn-primary">Смотреть весь каталог</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ПОВОДЫ -->
+  <section class="section" style="background:var(--surface-container-low)">
+    <div class="container">
+      <div class="section-header">
+        <p class="section-label">Для любого повода</p>
+        <h2 class="section-title">Выбирайте по настроению</h2>
+      </div>
+      <div class="occasions-row">
+        <a href="/catalog.html?occasion=день рождения" class="occasion-card">
+          <img src="/uploads/occasion-dr.jpg" alt="День рождения" style="filter:blur(2px)">
+          <div class="occasion-overlay"><div><h3>День рождения</h3><p>Яркие букеты для именинника</p></div></div>
+        </a>
+        <a href="/catalog.html?occasion=свадьба" class="occasion-card">
+          <img src="/uploads/occasion-svadba.jpg" alt="Свадьба" style="filter:blur(2px)">
+          <div class="occasion-overlay"><div><h3>Свадьба</h3><p>Белые и нежные композиции</p></div></div>
+        </a>
+        <a href="/catalog.html?occasion=без повода" class="occasion-card">
+          <img src="/uploads/occasion-bez-povoda.jpg" alt="Без повода" style="filter:blur(2px)">
+          <div class="occasion-overlay"><div><h3>Без повода</h3><p>Просто потому что</p></div></div>
+        </a>
+        <a href="/catalog.html?category=otdelnye-cvety" class="occasion-card">
+          <img src="/uploads/occasion-otdelnye.jpg" alt="Отдельные цветы" style="filter:blur(2px)">
+          <div class="occasion-overlay"><div><h3>Отдельные цветы</h3><p>Розы, тюльпаны, хризантемы</p></div></div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- НОВИНКИ -->
+  <section class="new-section section">
+    <div class="container">
+      <div class="section-header">
+        <p class="section-label">Свежее поступление</p>
+        <h2 class="section-title">Новинки</h2>
+      </div>
+    </div>
+    <div class="hits-carousel-wrapper">
+      <div class="hits-carousel" id="new-carousel"></div>
+    </div>
+  </section>
+
+  <!-- КАК РАБОТАЕМ -->
+  <section id="how" class="how-section section">
+    <div class="container">
+      <div class="section-header">
+        <p class="section-label">Просто и удобно</p>
+        <h2 class="section-title">Как мы работаем</h2>
+      </div>
+      <div class="how-grid">
+        <div class="how-step">
+          <div class="how-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          </div>
+          <h3>1. Выберите букет</h3>
+          <p>Найдите идеальный вариант в каталоге или закажите авторскую композицию по вашему пожеланию.</p>
+        </div>
+        <div class="how-step">
+          <div class="how-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+          </div>
+          <h3>2. Оформите заказ</h3>
+          <p>Укажите адрес и удобное время доставки. Оплата — наличными или картой курьеру.</p>
+        </div>
+        <div class="how-step">
+          <div class="how-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          </div>
+          <h3>3. Получите букет</h3>
+          <p>Доставим за 2-3 часа. Свежие цветы, красивая упаковка и улыбка курьера.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- О НАС -->
+  <section id="about" class="about-section section">
+    <div class="container">
+      <div class="about-grid">
+        <div class="about-image">
+          <img src="/uploads/bouquet7.jpg" alt="Flower Lab Atelier">
+          <div class="about-image-overlay"><p class="about-image-text">Создаём красоту с 2018 года</p></div>
+        </div>
+        <div class="about-content">
+          <p class="about-label">О нашем ателье</p>
+          <h2 class="about-title">Цветы, рождённые в Арктике</h2>
+          <p class="about-description">Flower Lab Norilsk — это уникальное флористическое ателье, работающее в экстремальных условиях Крайнего Севера. Мы привозим свежие цветы из лучших оранжерей мира и создаём композиции, которые превосходят все ожидания.</p>
+          <div class="about-features">
+            <div class="about-feature">
+              <div class="about-feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
+              <div class="about-feature-text"><p class="about-feature-title">Свежие цветы</p><p>Доставка в день заказа</p></div>
+            </div>
+            <div class="about-feature">
+              <div class="about-feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
+              <div class="about-feature-text"><p class="about-feature-title">Быстрая доставка</p><p>По всему Норильску</p></div>
+            </div>
+            <div class="about-feature">
+              <div class="about-feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
+              <div class="about-feature-text"><p class="about-feature-title">Сделано с любовью</p><p>Каждый букет уникален</p></div>
+            </div>
+            <div class="about-feature">
+              <div class="about-feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+              <div class="about-feature-text"><p class="about-feature-title">Гарантия свежести</p><p>7 дней безупречного вида</p></div>
+            </div>
+          </div>
+          <a href="/catalog.html" class="btn btn-primary">Выбрать букет</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ОТЗЫВЫ -->
+  <section class="section" style="background:var(--surface-container-low)">
+    <div class="container">
+      <div class="section-header">
+        <p class="section-label">Отзывы</p>
+        <h2 class="section-title">Что говорят клиенты</h2>
+      </div>
+      <div class="reviews-grid">
+        <div class="review-card">
+          <div class="review-stars">★★★★★</div>
+          <p class="review-text">"Заказывала букет на день рождения подруге. Доставили за два часа, букет был потрясающе красивый! Подруга была в восторге."</p>
+          <p class="review-author">Анна К.</p>
+          <p class="review-date">Май 2026</p>
+        </div>
+        <div class="review-card">
+          <div class="review-stars">★★★★★</div>
+          <p class="review-text">"Flower Lab — мой любимый магазин цветов. Всегда свежие цветы и креативные композиции. Заказываю регулярно."</p>
+          <p class="review-author">Мария В.</p>
+          <p class="review-date">Апрель 2026</p>
+        </div>
+        <div class="review-card">
+          <div class="review-stars">★★★★★</div>
+          <p class="review-text">"Спасибо за прекрасный букет! Жена была в восторге. Особенно порадовала упаковка — всё очень стильно и с душой."</p>
+          <p class="review-author">Дмитрий С.</p>
+          <p class="review-date">Июнь 2026</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ФУТЕР -->
+  <footer id="contact" class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="footer-logo">
+            <svg class="footer-logo-icon" viewBox="0 0 40 40" fill="none"><path d="M20 5L25 15L35 20L25 25L20 35L15 25L5 20L15 15L20 5Z" fill="#7b5455"/></svg>
+            <span class="footer-logo-text">FLOWER LAB</span>
+          </div>
+          <p class="footer-description">Флористическое ателье в Норильске. Создаём уникальные букеты для вашего особого настроения.</p>
+        </div>
+        <div class="footer-column">
+          <h4 class="footer-column-title">Каталог</h4>
+          <ul class="footer-links">
+            <li class="footer-link"><a href="/catalog.html?category=avtorskie-bukety">Авторские букеты</a></li>
+            <li class="footer-link"><a href="/catalog.html?category=monobukety">Монобукеты</a></li>
+            <li class="footer-link"><a href="/catalog.html?category=kompozicii">Композиции</a></li>
+            <li class="footer-link"><a href="/catalog.html?category=otdelnye-cvety">Отдельные цветы</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h4 class="footer-column-title">Информация</h4>
+          <ul class="footer-links">
+            <li class="footer-link"><a href="#about">О нас</a></li>
+            <li class="footer-link"><a href="#how">Как заказать</a></li>
+            <li class="footer-link"><a href="#">Доставка и оплата</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h4 class="footer-column-title">Контакты</h4>
+          <ul class="footer-links">
+            <li class="footer-link"><a href="tel:+73912123456">+7 (3912) 12-34-56</a></li>
+            <li class="footer-link"><a href="mailto:info@flowerlab.ru">info@flowerlab.ru</a></li>
+            <li class="footer-link"><a href="#">г. Норильск, ул. Пушкина, 15</a></li>
+            <li class="footer-link"><a href="#">Пн-Вс: 9:00 — 21:00</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p class="footer-copyright">© 2026 Flower Lab Norilsk. Все права защищены.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/js/api.js?v=1781215710"></script>
+  <script src="/js/cart.js?v=1781215710"></script>
+  <script src="/js/main.js?v=1781215710"></script>
+  <script src="/js/animations.js?v=1"></script>
+  <script>
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) target.scrollIntoView({ behavior: 'smooth' });
+      });
+    });
+
+    function renderCard(f) {
+      const badge = f.is_new
+        ? '<span class="product-badge" style="background:rgba(46,125,50,0.92);color:#fff;backdrop-filter:none">Новинка</span>'
+        : f.is_hit
+          ? '<span class="product-badge">Хит</span>'
+          : '';
+      return `
+        <div class="product-card">
+          <a href="/flower.html?id=${f.flower_id}" class="product-image">
+            <img src="${imageOrPlaceholder(f.photo_url)}" alt="${f.name}" loading="lazy">
+            ${badge}
+          </a>
+          <div class="product-content">
+            <p class="product-category">${f.category_name || ''}</p>
+            <h3 class="product-name"><a href="/flower.html?id=${f.flower_id}">${f.name}</a></h3>
+            <p class="product-price">${formatPrice(f.price)}</p>
+            <div class="product-actions">
+              <button class="product-btn product-btn-primary" onclick='addToCart(${JSON.stringify({flower_id:f.flower_id,name:f.name,price:Number(f.price),photo_url:f.photo_url})})'>В корзину</button>
+              <a href="/flower.html?id=${f.flower_id}" class="product-btn product-btn-secondary">Подробнее</a>
+            </div>
+          </div>
+        </div>`;
+    }
+
+    async function loadHits() {
+      try {
+        const flowers = await api.flowers.list({ is_hit: 'true' });
+        document.getElementById('hits-carousel').innerHTML = flowers.map(renderCard).join('');
+        startCarousel('hits-carousel');
+      } catch (err) { console.error(err); }
+    }
+
+    function startCarousel(trackId) {
+      const track = document.getElementById(trackId);
+      const cards = track.children;
+      if (cards.length <= 1) return;
+      const gap = 28;
+      const visibleCards = 3;
+      let index = 0;
+      setTimeout(() => {
+        const cardWidth = cards[0].offsetWidth + gap;
+        setInterval(() => {
+          index++;
+          if (index > cards.length - visibleCards) {
+            track.style.transition = 'none';
+            track.style.transform = 'translateX(0)';
+            index = 0;
+            return;
+          }
+          track.style.transition = 'transform 0.6s cubic-bezier(0.25, 0.1, 0.25, 1)';
+          track.style.transform = `translateX(-${index * cardWidth}px)`;
+        }, 3000);
+      }, 500);
+    }
+
+    async function loadNew() {
+      try {
+        const flowers = await api.flowers.list({ is_new: 'true' });
+        document.getElementById('new-carousel').innerHTML = flowers.map(renderCard).join('');
+        startCarousel('new-carousel');
+      } catch (err) { console.error(err); }
+    }
+
+    function addToCart(flower) {
+      Cart.addItem(flower);
+      const btn = event.target;
+      btn.textContent = 'Добавлено!';
+      btn.style.backgroundColor = '#2e7d32';
+      setTimeout(() => { btn.textContent = 'В корзину'; btn.style.backgroundColor = ''; }, 1500);
+    }
+
+    loadHits();
+    loadNew();
+  </script>
+  <script>
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (!target) return;
+        const startY = window.scrollY;
+        const endY = target.getBoundingClientRect().top + startY - 80;
+        const distance = endY - startY;
+        const duration = 1200;
+        let start = null;
+        function ease(t) { return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
+        function step(ts) {
+          if (!start) start = ts;
+          const p = Math.min((ts - start) / duration, 1);
+          window.scrollTo(0, startY + distance * ease(p));
+          if (p < 1) requestAnimationFrame(step);
+        }
+        requestAnimationFrame(step);
+      });
+    });
+  </script>
+</body>
+</html>

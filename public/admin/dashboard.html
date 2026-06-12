@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard | Flower Lab Admin</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+  <div class="admin-layout" id="admin-layout">
+    <div id="sidebar"></div>
+    <main class="admin-main">
+      <h1>Dashboard</h1>
+      <div class="admin-stats" id="stats"></div>
+      <h2 style="margin:32px 0 16px">Последние заказы</h2>
+      <table class="admin-table" id="recent-orders"><thead><tr><th>№</th><th>Клиент</th><th>Сумма</th><th>Статус</th><th>Дата</th></tr></thead><tbody></tbody></table>
+      <h2 style="margin:32px 0 16px">Последние действия</h2>
+      <table class="admin-table" id="recent-logs"><thead><tr><th>Сотрудник</th><th>Действие</th><th>Таблица</th><th>Дата</th></tr></thead><tbody></tbody></table>
+    </main>
+  </div>
+  <script src="/js/api.js?v=1781215710"></script>
+  <script src="/js/main.js?v=1781215710"></script>
+  <script src="/js/admin.js?v=1781215710"></script>
+  <script>
+    (async function() {
+      const user = await checkAuth();
+      if (!user) return;
+      document.getElementById('sidebar').innerHTML = renderAdminSidebar('dashboard');
+
+      try {
+        const [orders, flowers, logs] = await Promise.all([
+          api.orders.list({}).catch(() => []),
+          api.flowers.list({}).catch(() => []),
+          api.logs.list({ limit: 5 }).catch(() => [])
+        ]);
+
+        const today = new Date().toDateString();
+        const todayOrders = orders.filter(o => new Date(o.created_at).toDateString() === today);
+        const totalRevenue = orders.reduce((s, o) => s + Number(o.total_amount), 0);
+
+        document.getElementById('stats').innerHTML = `
+          <div class="stat-card"><h3>Сегодня</h3><p class="stat-value">${todayOrders.length}</p><p class="stat-label">заказов</p></div>
+          <div class="stat-card"><h3>Всего</h3><p class="stat-value">${orders.length}</p><p class="stat-label">заказов</p></div>
+          <div class="stat-card"><h3>Товары</h3><p class="stat-value">${flowers.length}</p><p class="stat-label">в каталоге</p></div>
+          <div class="stat-card"><h3>Выручка</h3><p class="stat-value">${formatPrice(totalRevenue)}</p><p class="stat-label">за все время</p></div>
+        `;
+
+        document.querySelector('#recent-orders tbody').innerHTML = orders.slice(0, 5).map(o => `<tr>
+          <td>#${o.order_id}</td><td>${o.customer_name}</td><td>${formatPrice(o.total_amount)}</td>
+          <td><span class="status-badge ${statusClasses[o.status] || ''}">${statusLabels[o.status] || o.status}</span></td>
+          <td>${formatDate(o.created_at)}</td>
+        </tr>`).join('');
+
+        document.querySelector('#recent-logs tbody').innerHTML = logs.map(l => `<tr>
+          <td>${l.employee_name || '—'}</td><td>${actionLabels[l.action] || l.action}</td>
+          <td>${l.table_name || '—'}</td><td>${formatDate(l.created_at)}</td>
+        </tr>`).join('');
+      } catch (err) {
+        console.error(err);
+      }
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Категории | Flower Lab Admin</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+  <div class="admin-layout" id="admin-layout">
+    <div id="sidebar"></div>
+    <main class="admin-main">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
+        <h1>Категории</h1>
+        <button class="btn btn-primary" onclick="openModal()">Добавить</button>
+      </div>
+      <table class="admin-table" id="cat-table">
+        <thead><tr><th>Название</th><th>Slug</th><th>Порядок</th><th>Активна</th><th>Действия</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </main>
+  </div>
+
+  <div class="admin-modal" id="modal" style="display:none">
+    <div class="admin-modal-content">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
+        <h2 id="modal-title">Добавить категорию</h2>
+        <button onclick="closeModal()" style="background:none;border:none;font-size:24px;cursor:pointer">✕</button>
+      </div>
+      <form id="cat-form" onsubmit="saveCategory(event)">
+        <input type="hidden" id="cat_id">
+        <div class="form-group"><label>Название *</label><input type="text" id="c_name" required></div>
+        <div class="form-group"><label>Slug *</label><input type="text" id="c_slug" required></div>
+        <div class="form-group"><label>Описание</label><textarea id="c_description" rows="2"></textarea></div>
+        <div class="form-group"><label>Порядок</label><input type="number" id="c_sort_order" value="0"></div>
+        <button type="submit" class="btn btn-primary" style="width:100%">Сохранить</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="/js/api.js?v=1781215710"></script>
+  <script src="/js/main.js?v=1781215710"></script>
+  <script src="/js/admin.js?v=1781215710"></script>
+  <script>
+    let cats = [];
+    let currentUser = null;
+
+    (async function() {
+      currentUser = await checkAuth();
+      if (!currentUser) return;
+      document.getElementById('sidebar').innerHTML = renderAdminSidebar('categories');
+      await loadCategories();
+    })();
+
+    async function loadCategories() {
+      cats = await api.categories.list();
+      document.querySelector('#cat-table tbody').innerHTML = cats.map(c => `<tr>
+        <td>${c.name}</td><td>${c.slug}</td><td>${c.sort_order}</td><td>${c.is_active ? '✓' : '✕'}</td>
+        <td><button onclick="editCategory(${c.category_id})" style="margin-right:8px">✏️</button>
+        ${isAdmin(currentUser) ? `<button onclick="deleteCategory(${c.category_id})">🗑️</button>` : ''}</td>
+      </tr>`).join('');
+    }
+
+    function openModal() {
+      document.getElementById('modal').style.display = 'flex';
+      document.getElementById('modal-title').textContent = 'Добавить категорию';
+      document.getElementById('cat-form').reset();
+      document.getElementById('cat_id').value = '';
+    }
+
+    function closeModal() { document.getElementById('modal').style.display = 'none'; }
+
+    function editCategory(id) {
+      const c = cats.find(x => x.category_id === id);
+      if (!c) return;
+      document.getElementById('modal').style.display = 'flex';
+      document.getElementById('modal-title').textContent = 'Редактировать';
+      document.getElementById('cat_id').value = c.category_id;
+      document.getElementById('c_name').value = c.name;
+      document.getElementById('c_slug').value = c.slug;
+      document.getElementById('c_description').value = c.description || '';
+      document.getElementById('c_sort_order').value = c.sort_order || 0;
+    }
+
+    async function saveCategory(e) {
+      e.preventDefault();
+      const id = document.getElementById('cat_id').value;
+      const data = {
+        name: document.getElementById('c_name').value,
+        slug: document.getElementById('c_slug').value,
+        description: document.getElementById('c_description').value,
+        sort_order: Number(document.getElementById('c_sort_order').value)
+      };
+      try {
+        if (id) { await api.categories.update(id, data); }
+        else { await api.categories.create(data); }
+        closeModal();
+        await loadCategories();
+      } catch (err) { alert(err.message); }
+    }
+
+    async function deleteCategory(id) {
+      if (!confirm('Удалить?')) return;
+      try { await api.categories.delete(id); await loadCategories(); } catch (err) { alert(err.message); }
+    }
+  </script>
+</body>
+</html>

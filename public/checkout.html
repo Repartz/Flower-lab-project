@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Оформление заказа | Flower Lab Norilsk</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/header.css">
+  <link rel="stylesheet" href="css/checkout.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/footer.css">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+</head>
+<body>
+  <header class="header">
+    <div class="header-container">
+      <a href="/" class="logo">
+        <svg class="logo-icon" viewBox="0 0 40 40" fill="none"><path d="M20 5L25 15L35 20L25 25L20 35L15 25L5 20L15 15L20 5Z" fill="#7b5455"/></svg>
+        <span class="logo-text">FLOWER LAB</span>
+      </a>
+      <nav class="nav"><a href="/" class="nav-link">Главная</a><a href="/catalog.html" class="nav-link">Каталог</a></nav>
+      <div class="header-actions">
+        <a href="/cart.html" class="header-icon cart-count">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6h15l-1.5 9h-12z"/><circle cx="9" cy="20" r="1"/><circle cx="18" cy="20" r="1"/></svg>
+          <span class="cart-badge">0</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <div class="container checkout-page">
+    <div class="checkout-header">
+      <h1 class="checkout-title">Оформление заказа</h1>
+      <div class="checkout-steps">
+        <div class="checkout-step active"><div class="checkout-step-number">1</div><span class="checkout-step-label">Данные</span></div>
+        <div class="checkout-step-divider"></div>
+        <div class="checkout-step"><div class="checkout-step-number">2</div><span class="checkout-step-label">Доставка</span></div>
+        <div class="checkout-step-divider"></div>
+        <div class="checkout-step"><div class="checkout-step-number">3</div><span class="checkout-step-label">Оплата</span></div>
+      </div>
+    </div>
+
+    <form id="checkout-form" onsubmit="submitOrder(event)">
+      <div class="checkout-content">
+        <div class="checkout-form">
+
+          <!-- КОНТАКТЫ -->
+          <div class="form-section">
+            <h3 class="form-section-title">Контактные данные</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Имя и фамилия *</label>
+                <input class="form-input" type="text" id="customer_name" required placeholder="Иван Иванов">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Телефон *</label>
+                <input class="form-input" type="tel" id="customer_phone" required placeholder="+7 (999) 123-45-67" maxlength="18">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Email</label>
+                <input class="form-input" type="email" id="customer_email" placeholder="email@example.com">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Telegram</label>
+                <div class="input-with-icon">
+                  <span class="input-icon">@</span>
+                  <input class="form-input input-icon-field" type="text" id="telegram_username" placeholder="username" maxlength="32">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- АДРЕС -->
+          <div class="form-section">
+            <h3 class="form-section-title">Адрес доставки</h3>
+            <div class="form-row full">
+              <div class="form-group">
+                <label class="form-label">Улица и дом *</label>
+                <input class="form-input" type="text" id="address" required placeholder="ул. Пушкина, д. 15">
+              </div>
+            </div>
+            <div class="form-row form-row-4">
+              <div class="form-group">
+                <label class="form-label">Корпус</label>
+                <input class="form-input" type="text" id="address_block" placeholder="1">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Подъезд</label>
+                <input class="form-input" type="text" id="address_entrance" placeholder="3">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Этаж</label>
+                <input class="form-input" type="text" id="address_floor" placeholder="5">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Квартира</label>
+                <input class="form-input" type="text" id="address_apartment" placeholder="42">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Домофон</label>
+                <input class="form-input" type="text" id="address_intercom" placeholder="Код: 15К">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Подъезд / Лифт</label>
+                <select class="form-input" id="address_elevator">
+                  <option value="">Не указано</option>
+                  <option value="none">Без лифта</option>
+                  <option value="passenger">Пассажирский</option>
+                  <option value="cargo">Грузовой</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row full">
+              <div class="form-group">
+                <label class="form-label">Комментарий к адресу</label>
+                <textarea class="form-input" id="address_comment" rows="2" placeholder="Вход со двора, домофона нет..."></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- ДОСТАВКА -->
+          <div class="form-section">
+            <h3 class="form-section-title">Дата и время доставки</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Дата</label>
+                <input class="form-input form-date" type="date" id="delivery_date">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Время</label>
+                <select class="form-input" id="delivery_time">
+                  <option value="">Любое время</option>
+                  <option value="09:00">09:00</option>
+                  <option value="09:30">09:30</option>
+                  <option value="10:00">10:00</option>
+                  <option value="10:30">10:30</option>
+                  <option value="11:00">11:00</option>
+                  <option value="11:30">11:30</option>
+                  <option value="12:00">12:00</option>
+                  <option value="12:30">12:30</option>
+                  <option value="13:00">13:00</option>
+                  <option value="13:30">13:30</option>
+                  <option value="14:00">14:00</option>
+                  <option value="14:30">14:30</option>
+                  <option value="15:00">15:00</option>
+                  <option value="15:30">15:30</option>
+                  <option value="16:00">16:00</option>
+                  <option value="16:30">16:30</option>
+                  <option value="17:00">17:00</option>
+                  <option value="17:30">17:30</option>
+                  <option value="18:00">18:00</option>
+                  <option value="18:30">18:30</option>
+                  <option value="19:00">19:00</option>
+                  <option value="19:30">19:30</option>
+                  <option value="20:00">20:00</option>
+                  <option value="20:30">20:30</option>
+                  <option value="21:00">21:00</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Тип доставки</label>
+              <div class="delivery-type-row">
+                <label class="delivery-option">
+                  <input type="radio" name="delivery_type" value="standard" checked>
+                  <div class="delivery-option-card">
+                    <span class="delivery-option-icon">🚚</span>
+                    <div>
+                      <strong>Стандартная</strong>
+                      <span>400 ₽, 2-3 часа</span>
+                    </div>
+                  </div>
+                </label>
+                <label class="delivery-option">
+                  <input type="radio" name="delivery_type" value="express">
+                  <div class="delivery-option-card">
+                    <span class="delivery-option-icon">⚡</span>
+                    <div>
+                      <strong>Срочная</strong>
+                      <span>1 000 ₽, до 1 часа</span>
+                    </div>
+                  </div>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- ОТКРЫТКА -->
+          <div class="form-section">
+            <h3 class="form-section-title">Открытка и комментарии</h3>
+            <div class="form-row full">
+              <div class="form-group">
+                <label class="form-label">Текст открытки</label>
+                <textarea class="form-input" id="gift_card_text" rows="3" placeholder="С Днём Рождения! Пусть каждый день будет наполнен красотой..."></textarea>
+              </div>
+            </div>
+            <div class="form-row full">
+              <div class="form-group">
+                <label class="form-label">Комментарий курьеру</label>
+                <textarea class="form-input" id="courier_comment" rows="2" placeholder="Позвонить за 10 минут до доставки..."></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div id="error-message" class="form-error" style="display:none"></div>
+          <button type="submit" class="btn-checkout-submit" id="submit-btn">
+            <span>Подтвердить заказ</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+
+        <div class="checkout-summary" id="checkout-summary"></div>
+      </div>
+    </form>
+  </div>
+
+  <footer class="footer" style="margin-top:60px">
+    <div class="container"><div class="footer-bottom"><p class="footer-copyright">© 2026 Flower Lab Norilsk.</p></div></div>
+  </footer>
+
+  <script src="/js/api.js?v=1781215710"></script>
+  <script src="/js/cart.js?v=1781215710"></script>
+  <script src="/js/main.js?v=1781215710"></script>
+  <script src="/js/animations.js?v=1"></script>
+  <script>
+    // Phone mask
+    const phoneInput = document.getElementById('customer_phone');
+    phoneInput.addEventListener('input', function(e) {
+      let val = e.target.value.replace(/\D/g, '');
+      if (val.length === 0) { e.target.value = ''; return; }
+      if (val[0] === '8') val = '7' + val.slice(1);
+      if (val[0] !== '7') val = '7' + val;
+      let formatted = '+7';
+      if (val.length > 1) formatted += ' (' + val.slice(1, 4);
+      if (val.length >= 4) formatted += ') ';
+      if (val.length > 4) formatted += val.slice(4, 7);
+      if (val.length > 7) formatted += '-' + val.slice(7, 9);
+      if (val.length > 9) formatted += '-' + val.slice(9, 11);
+      e.target.value = formatted;
+    });
+
+    // Telegram @ mask
+    const tgInput = document.getElementById('telegram_username');
+    tgInput.addEventListener('input', function(e) {
+      let val = e.target.value.replace(/[^a-zA-Z0-9_]/g, '');
+      e.target.value = val;
+    });
+
+    // Set min date to today
+    const dateInput = document.getElementById('delivery_date');
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    dateInput.min = `${yyyy}-${mm}-${dd}`;
+    dateInput.value = `${yyyy}-${mm}-${dd}`;
+
+    function renderSummary() {
+      const items = Cart.getItems();
+      const total = Cart.getTotal();
+      document.getElementById('checkout-summary').innerHTML = `
+        <h3 class="summary-title">Ваш заказ</h3>
+        <div class="summary-items">
+          ${items.map(i => `
+            <div class="summary-item">
+              <div class="summary-item-image"><img src="${imageOrPlaceholder(i.photo_url)}" alt="${i.name}"></div>
+              <div class="summary-item-details">
+                <p class="summary-item-name">${i.name}</p>
+                <p class="summary-item-price">${formatPrice(i.price)} × ${i.quantity}</p>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+        <div class="summary-row"><span class="summary-label">Сумма товаров</span><span class="summary-value" id="subtotal">${formatPrice(total)}</span></div>
+        <div class="summary-row"><span class="summary-label">Доставка</span><span class="summary-value" id="delivery-price">400 ₽</span></div>
+        <div class="summary-total">
+          <span class="summary-total-label">Итого</span>
+          <span class="summary-total-value" id="total-display">${formatPrice(total + 400)}</span>
+        </div>
+      `;
+    }
+
+    document.querySelectorAll('input[name="delivery_type"]').forEach(r => {
+      r.addEventListener('change', function() {
+        const total = Cart.getTotal();
+        const deliveryEl = document.getElementById('delivery-price');
+        if (this.value === 'express') {
+          deliveryEl.textContent = '1 000 ₽';
+          document.getElementById('total-display').textContent = formatPrice(total + 1000);
+        } else {
+          deliveryEl.textContent = '400 ₽';
+          document.getElementById('total-display').textContent = formatPrice(total + 400);
+        }
+        document.getElementById('total-display').textContent = formatPrice(total);
+      });
+    });
+
+    async function submitOrder(e) {
+      e.preventDefault();
+      const items = Cart.getItems();
+      if (items.length === 0) { showError('Корзина пуста'); return; }
+
+      const btn = document.getElementById('submit-btn');
+      btn.disabled = true;
+      btn.querySelector('span').textContent = 'Отправка...';
+
+      const fullAddress = [
+        document.getElementById('address').value,
+        document.getElementById('address_block').value ? 'корп. ' + document.getElementById('address_block').value : '',
+        document.getElementById('address_entrance').value ? 'под. ' + document.getElementById('address_entrance').value : '',
+        document.getElementById('address_floor').value ? 'эт. ' + document.getElementById('address_floor').value : '',
+        document.getElementById('address_apartment').value ? 'кв. ' + document.getElementById('address_apartment').value : '',
+        document.getElementById('address_intercom').value ? 'домофон: ' + document.getElementById('address_intercom').value : ''
+      ].filter(Boolean).join(', ');
+
+      try {
+        await api.orders.create({
+          customer_name: document.getElementById('customer_name').value,
+          customer_phone: document.getElementById('customer_phone').value,
+          customer_email: document.getElementById('customer_email').value,
+          telegram_username: document.getElementById('telegram_username').value ? '@' + document.getElementById('telegram_username').value : '',
+          address: fullAddress,
+          delivery_type: document.querySelector('input[name="delivery_type"]:checked').value,
+          delivery_date: document.getElementById('delivery_date').value,
+          delivery_time: document.getElementById('delivery_time').value,
+          gift_card_text: document.getElementById('gift_card_text').value,
+          courier_comment: [
+            document.getElementById('address_comment').value,
+            document.getElementById('address_elevator').value ? 'Лифт: ' + document.getElementById('address_elevator').selectedOptions[0].text : '',
+            document.getElementById('courier_comment').value
+          ].filter(Boolean).join(' | '),
+          items: items.map(i => ({ flower_id: i.flower_id, quantity: i.quantity }))
+        });
+        Cart.clear();
+        document.body.innerHTML = '<div style="text-align:center;padding:100px 20px"><h1 style="margin-bottom:16px">Спасибо за заказ!</h1><p style="margin-bottom:24px">Мы свяжемся с вами в ближайшее время</p><a href="/" class="btn btn-primary">На главную</a></div>';
+      } catch (err) {
+        showError(err.message);
+        btn.disabled = false;
+        btn.querySelector('span').textContent = 'Подтвердить заказ';
+      }
+    }
+
+    function showError(msg) {
+      const el = document.getElementById('error-message');
+      el.textContent = msg;
+      el.style.display = 'block';
+      setTimeout(() => { el.style.display = 'none'; }, 5000);
+    }
+
+    renderSummary();
+  </script>
+</body>
+</html>

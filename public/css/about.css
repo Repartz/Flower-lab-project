@@ -1,0 +1,128 @@
+.about-section {
+  padding: var(--spacing-section-gap) 0;
+  background-color: var(--surface-container-low);
+}
+
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+
+.about-image {
+  position: relative;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.about-image img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.about-image-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 40px;
+  background: linear-gradient(
+    to top,
+    rgba(123, 84, 85, 0.9) 0%,
+    rgba(123, 84, 85, 0) 100%
+  );
+}
+
+.about-image-text {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 300;
+  color: var(--on-primary);
+  letter-spacing: 0.1em;
+}
+
+.about-content {
+  padding: 40px 0;
+}
+
+.about-label {
+  font-family: var(--font-label);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--primary);
+  margin-bottom: 16px;
+}
+
+.about-title {
+  font-family: var(--font-headline);
+  font-size: 32px;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  color: var(--on-surface);
+  margin-bottom: 24px;
+}
+
+.about-description {
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.8;
+  color: var(--on-surface-variant);
+  margin-bottom: 32px;
+}
+
+.about-features {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  margin-bottom: 40px;
+}
+
+.about-feature {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.about-feature-icon {
+  width: 48px;
+  height: 48px;
+  background-color: var(--primary-container);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.about-feature-icon svg {
+  width: 24px;
+  height: 24px;
+  color: var(--primary);
+}
+
+.about-feature-text {
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--on-surface);
+}
+
+.about-feature-title {
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+@media (max-width: 1024px) {
+  .about-grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+  
+  .about-features {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Заказы | Flower Lab Admin</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+  <div class="admin-layout" id="admin-layout">
+    <div id="sidebar"></div>
+    <main class="admin-main">
+      <h1>Заказы</h1>
+      <div style="display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap">
+        <button class="btn btn-secondary filter-btn active" data-status="">Все</button>
+        <button class="btn btn-secondary filter-btn" data-status="new">Новые</button>
+        <button class="btn btn-secondary filter-btn" data-status="assembled">Собранные</button>
+        <button class="btn btn-secondary filter-btn" data-status="in_delivery">В доставке</button>
+        <button class="btn btn-secondary filter-btn" data-status="delivered">Доставлены</button>
+        <button class="btn btn-secondary filter-btn" data-status="cancelled">Отменены</button>
+      </div>
+      <table class="admin-table" id="orders-table">
+        <thead><tr><th>№</th><th>Клиент</th><th>Телефон</th><th>Сумма</th><th>Статус</th><th>Дата</th><th>Действия</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </main>
+  </div>
+
+  <div class="admin-modal" id="detail-modal" style="display:none">
+    <div class="admin-modal-overlay" onclick="closeDetail()"></div>
+    <div class="admin-modal-content order-detail-modal">
+      <div class="order-detail-header">
+        <div>
+          <h2 class="order-detail-title">Заказ #<span id="detail-id"></span></h2>
+          <span class="order-detail-status" id="detail-status"></span>
+        </div>
+        <button class="order-detail-close" onclick="closeDetail()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="order-detail-body" id="detail-content"></div>
+    </div>
+  </div>
+
+  <script src="/js/api.js?v=1781215710"></script>
+  <script src="/js/main.js?v=1781215710"></script>
+  <script src="/js/admin.js?v=1781215710"></script>
+  <script>
+    let currentStatus = '';
+    let currentUser = null;
+
+    (async function() {
+      currentUser = await checkAuth();
+      if (!currentUser) return;
+      document.getElementById('sidebar').innerHTML = renderAdminSidebar('orders');
+      await loadOrders();
+
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+          this.classList.add('active');
+          currentStatus = this.dataset.status;
+          loadOrders();
+        });
+      });
+    })();
+
+    async function loadOrders() {
+      const params = currentStatus ? { status: currentStatus } : {};
+      const orders = await api.orders.list(params);
+      document.querySelector('#orders-table tbody').innerHTML = orders.map(o => `<tr>
+        <td>#${o.order_id}</td><td>${o.customer_name}</td><td>${o.customer_phone}</td>
+        <td>${formatPrice(o.total_amount)}</td>
+        <td><span class="status-badge ${statusClasses[o.status] || ''}">${statusLabels[o.status] || o.status}</span></td>
+        <td>${formatDate(o.created_at)}</td>
+        <td>
+          <select onchange="changeStatus(${o.order_id}, this.value)" style="padding:4px;border-radius:4px;border:1px solid var(--outline-variant)">
+            <option value="" disabled selected>Изменить</option>
+            <option value="new">Новый</option>
+            <option value="assembled">Собран</option>
+            <option value="in_delivery">В доставке</option>
+            <option value="delivered">Доставлен</option>
+            <option value="cancelled">Отменён</option>
+          </select>
+          <button onclick="showDetail(${o.order_id})" style="margin-left:8px">👁️</button>
+          ${isAdmin(currentUser) ? `<button onclick="deleteOrder(${o.order_id})" style="margin-left:4px">🗑️</button>` : ''}
+        </td>
+      </tr>`).join('');
+    }
+
+    async function changeStatus(id, status) {
+      try { await api.orders.updateStatus(id, status); await loadOrders(); } catch (err) { alert(err.message); }
+    }
+
+    async function showDetail(id) {
+      const order = await api.orders.get(id);
+      document.getElementById('detail-id').textContent = id;
+      const statusEl = document.getElementById('detail-status');
+      statusEl.textContent = statusLabels[order.status] || order.status;
+      statusEl.className = 'order-detail-status status-badge ' + (statusClasses[order.status] || '');
+
+      const items = (order.items || []).map(i => `
+        <div class="od-item">
+          <img class="od-item-img" src="${imageOrPlaceholder(i.photo_url)}" alt="">
+          <div class="od-item-info">
+            <span class="od-item-name">${i.flower_name || 'Товар'}</span>
+            <span class="od-item-qty">${i.quantity} шт. × ${formatPrice(i.unit_price)}</span>
+          </div>
+          <span class="od-item-total">${formatPrice(i.total_price)}</span>
+        </div>
+      `).join('');
+
+      document.getElementById('detail-content').innerHTML = `
+        <div class="od-section">
+          <h4 class="od-section-title">Клиент</h4>
+          <div class="od-grid">
+            <div class="od-field"><span class="od-label">Имя</span><span class="od-value">${order.customer_name}</span></div>
+            <div class="od-field"><span class="od-label">Телефон</span><span class="od-value"><a href="tel:${order.customer_phone}">${order.customer_phone}</a></span></div>
+            ${order.customer_email ? `<div class="od-field"><span class="od-label">Email</span><span class="od-value"><a href="mailto:${order.customer_email}">${order.customer_email}</a></span></div>` : ''}
+            ${order.telegram_username ? `<div class="od-field"><span class="od-label">Telegram</span><span class="od-value"><a href="https://t.me/${order.telegram_username.replace('@','')}" target="_blank">${order.telegram_username}</a></span></div>` : ''}
+          </div>
+        </div>
+
+        <div class="od-section">
+          <h4 class="od-section-title">Доставка</h4>
+          <div class="od-grid">
+            <div class="od-field"><span class="od-label">Адрес</span><span class="od-value">${order.address || 'Не указан'}</span></div>
+            <div class="od-field"><span class="od-label">Тип</span><span class="od-value">${order.delivery_type === 'express' ? '⚡ Срочная' : '🚚 Стандартная'}</span></div>
+            ${order.delivery_date ? `<div class="od-field"><span class="od-label">Дата</span><span class="od-value">${order.delivery_date}</span></div>` : ''}
+            ${order.delivery_time ? `<div class="od-field"><span class="od-label">Время</span><span class="od-value">${order.delivery_time}</span></div>` : ''}
+          </div>
+        </div>
+
+        ${order.gift_card_text || order.courier_comment ? `
+        <div class="od-section">
+          <h4 class="od-section-title">Дополнительно</h4>
+          ${order.gift_card_text ? `<div class="od-note"><span class="od-note-label">Открытка:</span> ${order.gift_card_text}</div>` : ''}
+          ${order.courier_comment ? `<div class="od-note"><span class="od-note-label">Комментарий:</span> ${order.courier_comment}</div>` : ''}
+        </div>` : ''}
+
+        <div class="od-section">
+          <h4 class="od-section-title">Товары</h4>
+          <div class="od-items">${items}</div>
+        </div>
+
+        <div class="od-total">
+          <span>Итого</span>
+          <span class="od-total-value">${formatPrice(order.total_amount)}</span>
+        </div>
+
+        <div class="od-meta">
+          <span>Создан: ${formatDate(order.created_at)}</span>
+          ${order.handled_by_name ? `<span>Обработал: ${order.handled_by_name}</span>` : ''}
+        </div>
+      `;
+      document.getElementById('detail-modal').style.display = 'flex';
+    }
+
+    function closeDetail() {
+      document.getElementById('detail-modal').style.display = 'none';
+    }
+
+    async function deleteOrder(id) {
+      if (!confirm('Удалить заказ?')) return;
+      try { await api.orders.delete(id); await loadOrders(); } catch (err) { alert(err.message); }
+    }
+  </script>
+</body>
+</html>

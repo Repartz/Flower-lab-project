@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Сотрудники | Flower Lab Admin</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+  <div class="admin-layout" id="admin-layout">
+    <div id="sidebar"></div>
+    <main class="admin-main">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
+        <h1>Сотрудники</h1>
+        <button class="btn btn-primary" id="add-btn" onclick="openModal()">Добавить</button>
+      </div>
+      <table class="admin-table" id="emp-table">
+        <thead><tr><th>Имя</th><th>Логин</th><th>Телефон</th><th>Email</th><th>Роль</th><th>Активен</th><th>Действия</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </main>
+  </div>
+
+  <div class="admin-modal" id="modal" style="display:none">
+    <div class="admin-modal-content">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
+        <h2 id="modal-title">Добавить сотрудника</h2>
+        <button onclick="closeModal()" style="background:none;border:none;font-size:24px;cursor:pointer">✕</button>
+      </div>
+      <form id="emp-form" onsubmit="saveEmployee(event)">
+        <input type="hidden" id="emp_id">
+        <div class="form-group"><label>Имя *</label><input type="text" id="e_name" required></div>
+        <div class="form-group"><label>Логин *</label><input type="text" id="e_login" required></div>
+        <div class="form-group"><label>Пароль <span id="pwd-hint">(обязательно при создании)</span></label><input type="password" id="e_password"></div>
+        <div class="form-group"><label>Телефон</label><input type="tel" id="e_phone"></div>
+        <div class="form-group"><label>Email</label><input type="email" id="e_email"></div>
+        <div class="form-group"><label>Роль</label><select id="e_role"><option value="Manager">Manager</option><option value="Admin">Admin</option></select></div>
+        <button type="submit" class="btn btn-primary" style="width:100%">Сохранить</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="/js/api.js?v=1781215710"></script>
+  <script src="/js/main.js?v=1781215710"></script>
+  <script src="/js/admin.js?v=1781215710"></script>
+  <script>
+    let employees = [];
+    let currentUser = null;
+
+    (async function() {
+      currentUser = await checkAuth();
+      if (!currentUser || !isAdmin(currentUser)) {
+        document.getElementById('admin-main').innerHTML = '<p>Нет доступа</p>';
+        return;
+      }
+      document.getElementById('sidebar').innerHTML = renderAdminSidebar('employees');
+      await loadEmployees();
+    })();
+
+    async function loadEmployees() {
+      employees = await api.employees.list();
+      document.querySelector('#emp-table tbody').innerHTML = employees.map(e => `<tr>
+        <td>${e.full_name}</td><td>${e.login}</td><td>${e.phone || '—'}</td><td>${e.email || '—'}</td>
+        <td>${(e.roles || []).join(', ')}</td><td>${e.is_active ? '✓' : '✕'}</td>
+        <td><button onclick="editEmployee(${e.employee_id})">✏️</button>
+        <button onclick="deleteEmployee(${e.employee_id})" style="margin-left:4px">🗑️</button></td>
+      </tr>`).join('');
+    }
+
+    function openModal() {
+      document.getElementById('modal').style.display = 'flex';
+      document.getElementById('modal-title').textContent = 'Добавить сотрудника';
+      document.getElementById('emp-form').reset();
+      document.getElementById('emp_id').value = '';
+      document.getElementById('pwd-hint').textContent = '(обязательно при создании)';
+      document.getElementById('e_password').required = true;
+    }
+
+    function closeModal() { document.getElementById('modal').style.display = 'none'; }
+
+    function editEmployee(id) {
+      const e = employees.find(x => x.employee_id === id);
+      if (!e) return;
+      document.getElementById('modal').style.display = 'flex';
+      document.getElementById('modal-title').textContent = 'Редактировать';
+      document.getElementById('emp_id').value = e.employee_id;
+      document.getElementById('e_name').value = e.full_name;
+      document.getElementById('e_login').value = e.login;
+      document.getElementById('e_phone').value = e.phone || '';
+      document.getElementById('e_email').value = e.email || '';
+      document.getElementById('e_role').value = (e.roles || [])[0] || 'Manager';
+      document.getElementById('e_password').required = false;
+      document.getElementById('pwd-hint').textContent = '(оставьте пустым, чтобы не менять)';
+    }
+
+    async function saveEmployee(e) {
+      e.preventDefault();
+      const id = document.getElementById('emp_id').value;
+      const data = {
+        full_name: document.getElementById('e_name').value,
+        login: document.getElementById('e_login').value,
+        phone: document.getElementById('e_phone').value,
+        email: document.getElementById('e_email').value,
+        role: document.getElementById('e_role').value
+      };
+      const pwd = document.getElementById('e_password').value;
+      if (pwd) data.password = pwd;
+
+      try {
+        if (id) { await api.employees.update(id, data); }
+        else { await api.employees.create(data); }
+        closeModal();
+        await loadEmployees();
+      } catch (err) { alert(err.message); }
+    }
+
+    async function deleteEmployee(id) {
+      if (!confirm('Удалить сотрудника?')) return;
+      try { await api.employees.delete(id); await loadEmployees(); } catch (err) { alert(err.message); }
+    }
+  </script>
+</body>
+</html>

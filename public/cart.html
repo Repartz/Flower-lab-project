@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Корзина | Flower Lab Norilsk</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/header.css">
+  <link rel="stylesheet" href="css/cart.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/footer.css">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+</head>
+<body>
+  <header class="header">
+    <div class="header-container">
+      <a href="/" class="logo">
+        <svg class="logo-icon" viewBox="0 0 40 40" fill="none"><path d="M20 5L25 15L35 20L25 25L20 35L15 25L5 20L15 15L20 5Z" fill="#7b5455"/></svg>
+        <span class="logo-text">FLOWER LAB</span>
+      </a>
+      <nav class="nav">
+        <a href="/" class="nav-link">Главная</a>
+        <a href="/catalog.html" class="nav-link">Каталог</a>
+      </nav>
+      <div class="header-actions">
+        <a href="/cart.html" class="header-icon cart-count">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6h15l-1.5 9h-12z"/><circle cx="9" cy="20" r="1"/><circle cx="18" cy="20" r="1"/></svg>
+          <span class="cart-badge">0</span>
+        </a>
+        <a href="/login.html" class="header-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <div class="container" style="padding-top:100px">
+    <h1 class="headline-lg" style="margin-bottom:32px">Корзина</h1>
+    <div class="cart-layout" id="cart-layout">
+      <div class="cart-items" id="cart-items"></div>
+      <div class="cart-summary" id="cart-summary"></div>
+    </div>
+    <div id="empty-cart" style="display:none;text-align:center;padding:60px 0">
+      <p style="font-size:18px;margin-bottom:16px">Корзина пуста</p>
+      <a href="/catalog.html" class="btn btn-primary">Перейти в каталог</a>
+    </div>
+  </div>
+
+  <footer class="footer" style="margin-top:60px">
+    <div class="container"><div class="footer-bottom"><p class="footer-copyright">© 2026 Flower Lab Norilsk.</p></div></div>
+  </footer>
+
+  <script src="/js/api.js?v=1781215710"></script>
+  <script src="/js/cart.js?v=1781215710"></script>
+  <script src="/js/main.js?v=1781215710"></script>
+  <script src="/js/animations.js?v=1"></script>
+  <script>
+    function renderCart() {
+      const items = Cart.getItems();
+      if (items.length === 0) {
+        document.getElementById('cart-layout').style.display = 'none';
+        document.getElementById('empty-cart').style.display = 'block';
+        return;
+      }
+      document.getElementById('cart-layout').style.display = 'flex';
+      document.getElementById('empty-cart').style.display = 'none';
+
+      document.getElementById('cart-items').innerHTML = items.map(item => `
+        <div class="cart-item" data-id="${item.flower_id}">
+          <img src="${imageOrPlaceholder(item.photo_url)}" alt="${item.name}" class="cart-item-image">
+          <div class="cart-item-info">
+            <h3 class="cart-item-name">${item.name}</h3>
+            <p class="cart-item-price">${formatPrice(item.price)}</p>
+          </div>
+          <div class="cart-item-quantity">
+            <button onclick="updateQty(${item.flower_id}, ${item.quantity - 1})">−</button>
+            <span>${item.quantity}</span>
+            <button onclick="updateQty(${item.flower_id}, ${item.quantity + 1})">+</button>
+          </div>
+          <p class="cart-item-total">${formatPrice(item.price * item.quantity)}</p>
+          <button class="cart-item-remove" onclick="removeItem(${item.flower_id})">✕</button>
+        </div>
+      `).join('');
+
+      const total = Cart.getTotal();
+      document.getElementById('cart-summary').innerHTML = `
+        <div class="cart-summary-content">
+          <h3>Итого</h3>
+          <div class="cart-summary-row"><span>Товаров:</span><span>${Cart.getCount()} шт.</span></div>
+          <div class="cart-summary-row"><span>Сумма:</span><span>${formatPrice(total)}</span></div>
+          <div class="cart-summary-row"><span>Доставка:</span><span>Бесплатно</span></div>
+          <div class="cart-summary-total"><span>К оплате:</span><span>${formatPrice(total)}</span></div>
+          <a href="/checkout.html" class="btn btn-primary" style="width:100%;margin-top:16px">Оформить заказ</a>
+          <a href="/catalog.html" class="btn btn-secondary" style="width:100%;margin-top:8px">Продолжить покупки</a>
+        </div>
+      `;
+    }
+
+    function updateQty(id, qty) {
+      Cart.updateQuantity(id, qty);
+      renderCart();
+    }
+
+    function removeItem(id) {
+      Cart.removeItem(id);
+      renderCart();
+    }
+
+    renderCart();
+  </script>
+  <script>
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (!target) return;
+        const startY = window.scrollY;
+        const endY = target.getBoundingClientRect().top + startY - 80;
+        const distance = endY - startY;
+        const duration = 1200;
+        let start = null;
+        function ease(t) { return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
+        function step(ts) {
+          if (!start) start = ts;
+          const p = Math.min((ts - start) / duration, 1);
+          window.scrollTo(0, startY + distance * ease(p));
+          if (p < 1) requestAnimationFrame(step);
+        }
+        requestAnimationFrame(step);
+      });
+    });
+  </script>
+</body>
+</html>
